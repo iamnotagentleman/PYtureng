@@ -96,7 +96,8 @@ def writer(main_word,type):
         sayac2 += 1
     print(frames.frame_last)
 if __name__ == "__main__":
+    print(type(sys.argv[1:2]))
     if sys.argv[1:2] == ['en']:
-        writer(sys.argv[2:3],"en t")
+        writer(sys.argv[2:3],"en tm")
     elif sys.argv[1:2] == ['tr']:
         writer(sys.argv[2:3],"tr ts")
