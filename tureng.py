@@ -74,11 +74,11 @@ def writer(main_word,type):
         frame1 = frames.frame1_en
     subject = subject_remaker(main_word) ## dict
     turkish_word = word_remaker(main_word,type).split("\n") ## turkce
-    sayac2 = 1
+    counter2 = 1
     print(frame1)
     for i in turkish_word:
         try:
-            counter_sub = len(subject.get(sayac2))
+            counter_sub = len(subject.get(counter2))
         except:
             break
         i = str(i).replace("</a> <i>","")
@@ -88,11 +88,11 @@ def writer(main_word,type):
         i = i.replace("i.","")
         main_word = str(main_word).replace("['","")
         main_word = main_word.replace("']","")
-        a = frames.frame2.format(str(sayac2)+" "*(4 -len(str(sayac2))),subject.get(sayac2)+(16-counter_sub)*" ",main_word,i)
+        a = frames.frame2.format(str(counter2)+" "*(4 -len(str(counter2))),subject.get(counter2)+(16-counter_sub)*" ",main_word,i)
         counter_a = len(a)
         a += ((82 - counter_a)*" " +"|")
         print(a)
-        sayac2 += 1
+        counter2 += 1
     print(frames.frame_last)
 if __name__ == "__main__":
     if sys.argv[1:2] == ['en']:
