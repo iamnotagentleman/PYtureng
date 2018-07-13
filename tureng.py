@@ -96,6 +96,6 @@ def writer(main_word,type):
     print(frames.frame_last)
 if __name__ == "__main__":
     if sys.argv[1:2] == ['en']:
-        writer(sys.argv[2:3],"en tm")
+        writer(sys.argv[2:],"en tm")
     elif sys.argv[1:2] == ['tr']:
-        writer(sys.argv[2:3],"tr ts")
+        writer(sys.argv[2:],"tr ts")
