@@ -68,7 +68,6 @@ def subject_remaker(word_t):
     return subejct_dict
 
 def writer(main_word,type):
-    frame2="| {}"
     if type == "en tm":
         frame1 = frames.frame1_tr
     if type == "tr ts":
