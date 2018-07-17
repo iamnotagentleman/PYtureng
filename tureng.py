@@ -95,8 +95,11 @@ class Translater:
             i = i.replace("i.", "")
             main_word = str(main_word).replace("['", "")
             main_word = main_word.replace("']", "")
-            a = frames.frame2.format(str(counter2)+" "*(4 - len(str(counter2))),
-                                     self.subject_dict.get(counter2)+(16-counter_sub)*" ", main_word, i)
+            a = frames.frame2.format(
+                str(counter2)+" "*(4 - len(str(counter2))),
+                self.subject_dict.get(counter2)+(16-counter_sub)*" ",
+                main_word,
+                i,)
             counter_a = len(a)
             a += ((82 - counter_a)*" " + "|")
             print(a)
