@@ -120,7 +120,7 @@ class Translater:
         print(frames.frame_last)
 
 
-if __name__ == "__main__" or "tureng":
+if __name__ == "__main__" or __name__ == "tureng":
     main = Translater()
     if sys.argv[1:2] == ['en']:
         main.writer(sys.argv[2:], "en tm")
