@@ -6,11 +6,6 @@ import requests
 from bs4 import BeautifulSoup
 import frames
 
-
-
-
-
-
 class Translater:
 
     def __init__(self):
