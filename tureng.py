@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
-
+import pdb
 import requests
 from bs4 import BeautifulSoup
 import frames
+import importlib
+
 
 class Translater:
 
@@ -50,33 +52,15 @@ class Translater:
         self.mytds = soup.findAll("td", {"class": "hidden-xs"})
 
     def subject_remaker(self, word_t):
-        pool = ""
-        counter = 1
+        pool = []
+        counter = 0
         self.subject_crawler(word_t)
         for i in self.mytds:
-            i = str(i)
-            i = i.replace('<td class="rc0 hidden-xs">1</td>', "")
-            i = i.replace(
-                '<td class="rc4 hidden-xs"><span class="glyphicon glyphicon-option-horizontal"></span></td>', "")
-            i = i.replace('<td class="rc0 hidden-xs">', "")
-            i = i.replace("</td>", "")
-            try:
-                i = int(i)
-                i = ""
-            except:
-                i = i
-            i = i.replace('<td class="hidden-xs">', "")
-            i = i + ","
-            pool += i
-            pool = pool.replace(",,,", ",")
-            pool = pool.replace(",,", ",")
-            if pool.startswith(","):
-                pool = "" + pool[1:]
-        pool = pool.split(",")
-        for i in pool:
-            if i != "":
-                self.subject_dict.update({counter: i})
+            i = i.get_text()
+            if len(i) >= 4:
+                pool.append(i)
                 counter += 1
+                self.subject_dict.update({counter: i})
 
     def writer(self, main_word, type):
         frame1 = None
@@ -91,25 +75,29 @@ class Translater:
         self.subject_remaker(main_word)
         print(frame1)
         for i in self.word_remaker(main_word, type).split("\n"):
-            counter_sub = self.subject_dict.get(counter2)
-            if counter_sub is not None:
-                counter_sub = len(counter_sub)
-                i = str(i).replace("</a> <i>", "")
-                i = i.replace(r" </i>\n</td>']", "")
-                i = i.replace(r' </i>\n</td>"]', "")
-                i = i.replace('["', "")
-                i = i.replace("i.", "")
-                main_word = str(main_word).replace("['", "")
-                main_word = main_word.replace("']", "")
-                a = frames.frame2.format(
-                    str(counter2) + " " * (4 - len(str(counter2))),
-                    self.subject_dict.get(counter2) + (16 - counter_sub) * " ",
-                    main_word,
-                    i, )
-                counter_a = len(a)
-                a += ((82 - counter_a) * " " + "|")
-                print(a)
-                counter2 += 1
+            if counter2 < write_time:
+                counter_sub = self.subject_dict.get(counter2)
+                if counter_sub is not None:
+                    counter_sub = len(counter_sub)
+                    i = str(i).replace("</a> <i>", "")
+                    i = i.replace(r" </i>\n</td>']", "")
+                    i = i.replace(r' </i>\n</td>"]', "")
+                    i = i.replace('["', "")
+                    i = i.replace("i.", "")
+                    main_word = str(main_word).replace("['", "")
+                    main_word = main_word.replace("']", "")
+                    a = frames.frame2.format(
+                        str(counter2) + " " * (4 - len(str(counter2))),
+                        self.subject_dict.get(counter2) + (16 - counter_sub) * " ",
+                        main_word,
+                        i, )
+                    counter_a = len(a)
+                    a += ((82 - counter_a) * " " + "|")
+                    print(a)
+                    counter2 += 1
+            else:
+                print(frames.frame_last)        
+                break
         else:
             pass
         print(frames.frame_last)
@@ -118,6 +106,6 @@ class Translater:
 if __name__ == "__main__" or __name__ == "tureng":
     main = Translater()
     if sys.argv[1:2] == ['en']:
-        main.writer(sys.argv[2:], "en tm")
+        main.writer(sys.argv[2:], "en_tm")
     elif sys.argv[1:2] == ['tr']:
-        main.writer(sys.argv[2:], "tr ts")
+        main.writer(sys.argv[2:], "tr_ts")
