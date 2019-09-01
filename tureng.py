@@ -59,7 +59,7 @@ class Translater:
         for i in range(len(data)):
             print(i+1, "-)", data[i]['query_word'][0])
 
-    def writer(self, main_word, type):
+    def writer(self, main_word, type, is_history=False):
         if type == "en tm":
             frame1 = frames.frame_en
         elif type == "tr ts":
@@ -90,16 +90,18 @@ class Translater:
                 break
         else:
             pass
-        data = {
-            'query_word': main_word,
-            'outcome_word': outcome_list[0],
-            'outcome_subject': outcome_list[1],
-            'outcome_word1': outcome_list[2],
-            'outcome_subject1': outcome_list[3]
-        }
-        with open('data.json', 'a', encoding="utf8") as outfile:
-            outfile.write("\n")
-            json.dump(data, outfile, ensure_ascii=False)
+        if is_history is False:
+            data = {
+                'query_word': main_word,
+                'query_type': type,
+                'outcome_word': outcome_list[0],
+                'outcome_subject': outcome_list[1],
+                'outcome_word1': outcome_list[2],
+                'outcome_subject1': outcome_list[3]
+            }
+            with open('data.json', 'a', encoding="utf8") as outfile:
+                outfile.write("\n")
+                json.dump(data, outfile, ensure_ascii=False)
         print(frames.frame_last)
 
 
@@ -110,4 +112,18 @@ if __name__ == "__main__" or __name__ == "tureng":
     elif sys.argv[1] == "en":
         main.writer(sys.argv[2:], "tr ts")
     elif sys.argv[1] == "history":
-        main.history()
+        if sys.argv[2]:
+            try:
+                int(sys.argv[2])
+            except ValueError:
+                print("Unvalid Paramater.")
+            else:
+                data = [json.loads(line) for line in open('data.json', 'r')]
+                try:
+                    get_query = data[int(sys.argv[2])]
+                except IndexError as ixerr:
+                    print(ixerr)
+                else:
+                    main.writer(get_query['query_word'], get_query['query_type'], is_history=True)
+        else:
+            main.history()
