@@ -54,8 +54,12 @@ class Translater:
                 counter += 1
                 self.subject_dict.update({counter: i})
 
+    def history(self):
+        data = [json.loads(line) for line in open('data.json', 'r')]
+        for i in range(len(data)):
+            print(i+1, "-)", data[i]['query_word'][0])
+
     def writer(self, main_word, type):
-        print(type)
         if type == "en tm":
             frame1 = frames.frame_en
         elif type == "tr ts":
@@ -86,14 +90,13 @@ class Translater:
                 break
         else:
             pass
-        data = {'word': []}
-        data['word'].append({
+        data = {
             'query_word': main_word,
             'outcome_word': outcome_list[0],
             'outcome_subject': outcome_list[1],
             'outcome_word1': outcome_list[2],
             'outcome_subject1': outcome_list[3]
-        })
+        }
         with open('data.json', 'a', encoding="utf8") as outfile:
             outfile.write("\n")
             json.dump(data, outfile, ensure_ascii=False)
@@ -102,7 +105,9 @@ class Translater:
 
 if __name__ == "__main__" or __name__ == "tureng":
     main = Translater()
-    if sys.argv[1:2] == ['tr']:
+    if sys.argv[1] == "tr":
         main.writer(sys.argv[2:], "en tm")
-    elif sys.argv[1:2] == ['en']:
+    elif sys.argv[1] == "en":
         main.writer(sys.argv[2:], "tr ts")
+    elif sys.argv[1] == "history":
+        main.history()
