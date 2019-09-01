@@ -4,7 +4,7 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 import frames
-
+import json
 
 class Translater:
 
@@ -63,9 +63,10 @@ class Translater:
         write_time = 20
         counter2 = 1
         self.subject_remaker(main_word)
+        outcome_list = []
         print(frame1)
         for i in self.word_remaker(main_word, type).split("\n"):
-            if counter2 < write_time:
+            if counter2 < write_time+1:
                 counter_sub = self.subject_dict.get(counter2)
                 if counter_sub is not None:
                     counter_sub = len(counter_sub)
@@ -74,6 +75,9 @@ class Translater:
                         self.subject_dict.get(counter2) + (16 - counter_sub) * " ",
                         main_word[0],
                         i, )
+                    if counter2 == 1 or counter2 == 2:
+                        outcome_list.append(i)
+                        outcome_list.append(self.subject_dict.get(counter2))
                     counter_a = len(a)
                     a += ((82 - counter_a) * " " + "|")
                     print(a)
@@ -82,6 +86,17 @@ class Translater:
                 break
         else:
             pass
+        data = {'word': []}
+        data['word'].append({
+            'query_word': main_word,
+            'outcome_word': outcome_list[0],
+            'outcome_subject': outcome_list[1],
+            'outcome_word1': outcome_list[2],
+            'outcome_subject1': outcome_list[3]
+        })
+        with open('data.json', 'a', encoding="utf8") as outfile:
+            outfile.write("\n")
+            json.dump(data, outfile, ensure_ascii=False)
         print(frames.frame_last)
 
 
