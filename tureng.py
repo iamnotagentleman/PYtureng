@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
-import pdb
 import requests
 from bs4 import BeautifulSoup
 import frames
-import importlib
 
 
 class Translater:
@@ -16,7 +14,7 @@ class Translater:
         self.mytds = ""
 
     def word_crawler(self, word, type):
-        webpage = requests.get(self.main_url.format(word))
+        webpage = requests.get(self.main_url.format(word[0]))
         content = webpage.content
         soup = BeautifulSoup(content, "lxml")
         self.mytds = soup.findAll("td", {"class": "{}".format(type)})
@@ -30,22 +28,16 @@ class Translater:
                 td_finder = re.sub("^<td{}".format("." * 54), " ", str(i))
                 td_finder = re.sub("</a> </td>$", " ", str(td_finder))
                 td_finder = td_finder.split('">')
-                words += "".join(str(td_finder[1:]) + "\n")
-                words = words.replace(" ']", "")
-                words = words.replace("['", "")
+                words += "".join(str(td_finder[1]) + "\n")
             else:
                 break
         return words
 
     def subject_crawler(self, word):
-        word = str(word).encode("utf-8")
-        word = word.decode("utf-8")
-        word = word.replace("['", "")
-        word = word.replace("']", "")
         try:
-            webpage = requests.get(self.main_url.format(word))
-        except requests.exceptions.ConnectionError:
-            print("Network Error, Please Check our Connection")
+            webpage = requests.get(self.main_url.format(word[0]))
+        except requests.exceptions.ConnectionError as con_Err:
+            print("Network Error, Please Check our Connection", con_Err  )
             sys.exit()
         content = webpage.content
         soup = BeautifulSoup(content, "lxml")
@@ -63,15 +55,13 @@ class Translater:
                 self.subject_dict.update({counter: i})
 
     def writer(self, main_word, type):
-        frame1 = None
+        print(type)
+        if type == "en tm":
+            frame1 = frames.frame_en
+        elif type == "tr ts":
+            frame1 = frames.frame_tr
         write_time = 20
         counter2 = 1
-        if type == "en tm":
-            frame1 = frames.frame1_tr
-        elif type == "tr ts":
-            frame1 = frames.frame1_en
-        if counter2 > write_time:
-            sys.exit()
         self.subject_remaker(main_word)
         print(frame1)
         for i in self.word_remaker(main_word, type).split("\n"):
@@ -79,24 +69,16 @@ class Translater:
                 counter_sub = self.subject_dict.get(counter2)
                 if counter_sub is not None:
                     counter_sub = len(counter_sub)
-                    i = str(i).replace("</a> <i>", "")
-                    i = i.replace(r" </i>\n</td>']", "")
-                    i = i.replace(r' </i>\n</td>"]', "")
-                    i = i.replace('["', "")
-                    i = i.replace("i.", "")
-                    main_word = str(main_word).replace("['", "")
-                    main_word = main_word.replace("']", "")
                     a = frames.frame2.format(
                         str(counter2) + " " * (4 - len(str(counter2))),
                         self.subject_dict.get(counter2) + (16 - counter_sub) * " ",
-                        main_word,
+                        main_word[0],
                         i, )
                     counter_a = len(a)
                     a += ((82 - counter_a) * " " + "|")
                     print(a)
                     counter2 += 1
             else:
-                print(frames.frame_last)        
                 break
         else:
             pass
@@ -105,7 +87,7 @@ class Translater:
 
 if __name__ == "__main__" or __name__ == "tureng":
     main = Translater()
-    if sys.argv[1:2] == ['en']:
-        main.writer(sys.argv[2:], "en_tm")
-    elif sys.argv[1:2] == ['tr']:
-        main.writer(sys.argv[2:], "tr_ts")
+    if sys.argv[1:2] == ['tr']:
+        main.writer(sys.argv[2:], "en tm")
+    elif sys.argv[1:2] == ['en']:
+        main.writer(sys.argv[2:], "tr ts")
