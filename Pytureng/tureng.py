@@ -73,19 +73,22 @@ class Translater:
             if counter2 < write_time+1:
                 counter_sub = self.subject_dict.get(counter2)
                 if counter_sub is not None:
-                    counter_sub = len(counter_sub)
-                    a = frames.frame2.format(
-                        str(counter2) + " " * (4 - len(str(counter2))),
-                        self.subject_dict.get(counter2) + (16 - counter_sub) * " ",
-                        main_word[0],
-                        i, )
-                    if counter2 == 1 or counter2 == 2:
-                        outcome_list.append(i)
-                        outcome_list.append(self.subject_dict.get(counter2))
-                    counter_a = len(a)
-                    a += ((82 - counter_a) * " " + "|")
-                    print(a)
-                    counter2 += 1
+                    i = i.replace("</td>", "").replace("</a> <i>i. </i>", "").replace("</a> <i> </i>", "")\
+                        .replace("</a>", "").replace("<i>", "").replace("</i>", "")
+                    if len(i) > 1:
+                        counter_sub = len(counter_sub)
+                        a = frames.frame2.format(
+                            str(counter2) + " " * (4 - len(str(counter2))),
+                            self.subject_dict.get(counter2) + (16 - counter_sub) * " ",
+                            main_word[0],
+                            i, )
+                        if counter2 == 1 or counter2 == 2:
+                            outcome_list.append(i)
+                            outcome_list.append(self.subject_dict.get(counter2))
+                        counter_a = len(a)
+                        a += ((82 - counter_a) * " " + "|")
+                        print(a)
+                        counter2 += 1
             else:
                 break
         else:
