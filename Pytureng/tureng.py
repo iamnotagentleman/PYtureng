@@ -6,9 +6,9 @@ from bs4 import BeautifulSoup
 import frames
 import json
 
-class Translater:
 
-    def __init__(self):
+class Translater:
+    def __init__(self,):
         self.main_url = "http://tureng.com/tr/turkce-ingilizce/{}"
         self.subject_dict = {}
         self.mytds = ""
@@ -37,7 +37,7 @@ class Translater:
         try:
             webpage = requests.get(self.main_url.format(word[0]))
         except requests.exceptions.ConnectionError as con_Err:
-            print("Network Error, Please Check our Connection", con_Err  )
+            print("Network Error, Please Check our Connection", con_Err)
             sys.exit()
         content = webpage.content
         soup = BeautifulSoup(content, "lxml")
@@ -96,9 +96,15 @@ class Translater:
                 'query_type': type,
                 'outcome_word': outcome_list[0],
                 'outcome_subject': outcome_list[1],
-                'outcome_word1': outcome_list[2],
-                'outcome_subject1': outcome_list[3]
             }
+            try:
+                outcome_list[2]
+                outcome_list[3]
+            except IndexError:
+                print("")
+            else:
+                data["outcome_word1"] = outcome_list[2]
+                data["outcome_subject1"] = outcome_list[3]
             with open('data.json', 'a', encoding="utf8") as outfile:
                 outfile.write("\n")
                 json.dump(data, outfile, ensure_ascii=False)
@@ -124,6 +130,9 @@ if __name__ == "__main__" or __name__ == "tureng":
                 except IndexError as ixerr:
                     print(ixerr)
                 else:
-                    main.writer(get_query['query_word'], get_query['query_type'], is_history=True)
+                    main.writer(get_query['query_word'],
+                                get_query['query_type'],
+                                is_history=True,
+                                )
         else:
             main.history()
