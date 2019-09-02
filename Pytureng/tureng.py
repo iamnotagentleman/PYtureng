@@ -60,14 +60,14 @@ class Translater:
             print(i+1, "-)", data[i]['query_word'][0])
 
     def writer(self, main_word, type, is_history=False):
+        write_time = 20
+        counter2 = 1
+        outcome_list = []
         if type == "en tm":
             frame1 = frames.frame_en
         elif type == "tr ts":
             frame1 = frames.frame_tr
-        write_time = 20
-        counter2 = 1
         self.subject_remaker(main_word)
-        outcome_list = []
         print(frame1)
         for i in self.word_remaker(main_word, type).split("\n"):
             if counter2 < write_time+1:
