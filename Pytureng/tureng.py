@@ -5,14 +5,15 @@ import requests
 from bs4 import BeautifulSoup
 import frames
 import json
-
-
+import os
+import logging
 class Translater:
     def __init__(self,):
         self.main_url = "http://tureng.com/tr/turkce-ingilizce/{}"
         self.subject_dict = {}
         self.mytds = ""
-
+        self.json_file_name = "data.json"
+        self.json_file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), self.json_file_name)
     def word_crawler(self, word, type):
         webpage = requests.get(self.main_url.format(word[0]))
         content = webpage.content
@@ -55,7 +56,7 @@ class Translater:
                 self.subject_dict.update({counter: i})
 
     def history(self):
-        data = [json.loads(line) for line in open('data.json', 'r')]
+        data = [json.loads(line) for line in open(self.json_file_path, 'r')]
         for i in range(len(data)):
             print(i+1, "-)", data[i]['query_word'][0])
 
@@ -108,8 +109,9 @@ class Translater:
             else:
                 data["outcome_word1"] = outcome_list[2]
                 data["outcome_subject1"] = outcome_list[3]
-            with open('data.json', 'a', encoding="utf8") as outfile:
-                outfile.write("\n")
+            with open(self.json_file_path, 'a', encoding="utf8") as outfile:
+                if os.stat(self.json_file_path).st_size != 0:
+                    outfile.write("\n")
                 json.dump(data, outfile, ensure_ascii=False)
         print(frames.frame_last)
 
@@ -121,21 +123,22 @@ if __name__ == "__main__" or __name__ == "tureng":
     elif sys.argv[1] == "en":
         main.writer(sys.argv[2:], "tr ts")
     elif sys.argv[1] == "history":
-        if sys.argv[2]:
-            try:
-                int(sys.argv[2])
-            except ValueError:
-                print("Unvalid Paramater.")
-            else:
-                data = [json.loads(line) for line in open('data.json', 'r')]
+        try:
+            sys.argv[2]
+        except IndexError:
+            logging.info("History Log Printing.. ")
+            main.history()
+        else:
+            if sys.argv[2]:
+                print("sysargv2")
+                data = [json.loads(line) for line in open(main.json_file_path, 'r')]
                 try:
                     get_query = data[int(sys.argv[2])]
                 except IndexError as ixerr:
                     print(ixerr)
                 else:
+                    logging.info(f"Printing Translated Sentence from history {get_query['query_word']}")
                     main.writer(get_query['query_word'],
                                 get_query['query_type'],
                                 is_history=True,
                                 )
-        else:
-            main.history()
